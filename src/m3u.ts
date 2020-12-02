@@ -5,7 +5,9 @@ import * as path from 'https://deno.land/std/path/mod.ts'
 import * as scanner from 'https://deno.land/x/scanner/mod.ts'
 
 export async function get(request: http.ServerRequest) {
+
 	let response = await fetch(Deno.env.get('M3U_URL') as string)
+	console.log('scanner ->', scanner)
 	console.log('response ->', response)
 	let lines = (await response.text()).split('\n')
 	for (let i = 0; i < lines.length; i++) {
