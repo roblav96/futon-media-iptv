@@ -7,9 +7,12 @@ export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
 
 install :
 	rm -r -f node_modules
-	mkdir -p -v "$DENO_DIR"
+	mkdir -p "$DENO_DIR"
 	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
-	deno cache --config tsconfig.json --unstable --reload src/mod.ts
+	deno cache --config tsconfig.json --unstable --reload --quiet src/mod.ts
+
+lint :
+	deno lint --unstable src/mod.ts
 
 run :
 	deno run --config tsconfig.json --unstable --allow-all --no-check src/mod.ts
