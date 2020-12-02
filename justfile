@@ -20,9 +20,9 @@ run :
 watch :
 	watchexec --restart -- 'printf "\ec\e[3J"; just run'
 
-stop :
+down :
 	kill -SIGTERM -$(cat "$HOME/.daemonize/futon-media-iptv.pid")
 	rm -v "$HOME/.daemonize/futon-media-iptv.pid"
-start :
-	if [ -e "$HOME/.daemonize/futon-media-iptv.pid" ]; then just stop; fi
+up :
+	if [ -e "$HOME/.daemonize/futon-media-iptv.pid" ]; then just down; fi
 	daemonize -c {{justfile_directory()}} -e "$HOME/.daemonize/futon-media-iptv.log" -o "$HOME/.daemonize/futon-media-iptv.log" -a -p "$HOME/.daemonize/futon-media-iptv.pid" -l "$HOME/.daemonize/futon-media-iptv.pid" -- /usr/bin/env just run
