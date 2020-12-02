@@ -4,8 +4,6 @@
 set shell := ["/usr/bin/env", "bash", "-c"]
 
 export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
-# export DENO_DIR := `echo "$PWD/node_modules/.cache/deno"`
-# export DENO_DIR := `echo "${DENO_DIR:-$PWD/node_modules/.cache/deno}"`
 
 install :
 	rm -r -f node_modules
