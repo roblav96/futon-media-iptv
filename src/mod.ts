@@ -7,20 +7,25 @@ import * as path from 'https://deno.land/std/path/mod.ts'
 import * as io from 'https://deno.land/std/io/mod.ts'
 
 const { EPG_URL, M3U_URL } = Deno.env.toObject()
-let data = fetch(M3U_URL)
-console.log('data ->', data)
+let response = await fetch(M3U_URL)
+console.log('response ->', response)
+if (response.body) {
+	let text = await response.text()
+	console.log('text ->', text)
+	// let reader = response.json
+	// let iter = io.BufReader.create(reader).readLine
+	// // let delim = /(?:\r?\n)/g
+	// for await (let Array of io.BufReader.create(response.body.getReader()).readFull()) {
 
-// console.log('${Deno.mainModule}/.env ->', `${Deno.mainModule}/.env`)
-// for (let line of Deno.readTextFileSync(`${Deno.mainModule}/.env`)) {
-// 	console.log('line ->', line)
-// }
+	// }
+	// // console.log('response ->', response.body.getReader())
+}
 
-// console.log('import.meta ->', import.meta)
-// console.log('Deno.mainModule ->', Deno.mainModule)
+const server = http.serve({ hostname: '127.0.0.1', port: 8080 })
+for await (const request of server) {
+	console.log('request ->', request)
+}
 
-// const server = http.serve({ hostname: '127.0.0.1', port: 8080 })
-// for await (const request of server) {
-// 	console.log('request ->', request)
-// }
+async function get_m3u() {
 
-// setInterval(Function, 1 << 30)
+}

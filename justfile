@@ -3,17 +3,17 @@
 
 set shell := ["/usr/bin/env", "bash", "-c"]
 
-init-dev :
-	rm -r -f -v node_modules
-	mkdir -p -v node_modules/.cache
-	ln -s -f -v $DENO_DIR node_modules/.cache/deno
+export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
+# export DENO_DIR := `echo "$PWD/node_modules/.cache/deno"`
+# export DENO_DIR := `echo "${DENO_DIR:-$PWD/node_modules/.cache/deno}"`
 
-cache :
-	deno cache --config tsconfig.json --unstable --no-check src/mod.ts
-watch-cache :
-	watchexec -- just cache
+install :
+	rm -r -f node_modules
+	mkdir -p -v "$DENO_DIR"
+	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
+	deno cache --config tsconfig.json --unstable --reload src/mod.ts
 
 run :
 	deno run --config tsconfig.json --unstable --allow-all --no-check src/mod.ts
-watch-run :
-	watchexec --restart -- 'tput clear; just run'
+watch :
+	watchexec --restart -- 'printf "\ec\e[3J"; just run'
