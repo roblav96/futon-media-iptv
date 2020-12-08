@@ -8,6 +8,7 @@ install :
 	rm -r -f node_modules
 	mkdir -p node_modules/.cache/deno
 	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
+	deno types --unstable > "$DENO_DIR/lib.deno.unstable.d.ts"
 	deno cache --unstable --reload src/mod.ts
 # ln -s "$DENO_DIR" node_modules/.cache/deno
 

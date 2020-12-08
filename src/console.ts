@@ -9,9 +9,7 @@ import * as util from 'https://deno.land/std/node/util.ts'
 import { intercept } from 'https://deno.land/x/function_intercept/index.ts'
 
 // @deno-types='https://cdn.skypack.dev/pretty-ms/dist=es2020,mode=types/index.d.ts'
-import ms from 'https://cdn.skypack.dev/pretty-ms'
-
-Deno.core.print('\n')
+import ms from 'https://cdn.skypack.dev/pretty-ms?dts'
 
 const DEFAULT_INSPECT_OPTIONS = {
 	colors: true,
@@ -49,9 +47,9 @@ console.log = new Proxy(console.log, {
 		let stacks = stack.split(' ')
 		for (let i = 0; i < stacks.length; i++) {
 			if (i == 0) {
-				stacks[i] = colors.dim(stacks[i])
+				stacks[i] = stacks[i]
 			} else if (i < stacks.length - 1) {
-				stacks[i] = colors.dim(colors.italic(colors.bold(stacks[i])))
+				stacks[i] = colors.italic(colors.bold(stacks[i]))
 			} else if (i == stacks.length - 1) {
 				stacks[i] = toCallSite(stacks[i])
 			}
@@ -59,10 +57,11 @@ console.log = new Proxy(console.log, {
 		stack = stacks.join(' ')
 
 		for (let i = 0; i < args.length; i++) {
-			if (i == 0 && typeof args[0] == 'string') {
+			let arg = args[i]
+			if (i == 0 && typeof arg == 'string') {
 				continue
 			}
-			args[i] = Deno.inspect(args[i], DEFAULT_INSPECT_OPTIONS)
+			args[i] = Deno.inspect(arg, DEFAULT_INSPECT_OPTIONS)
 		}
 
 		let now = performance.now()
@@ -70,9 +69,8 @@ console.log = new Proxy(console.log, {
 		this.before = now
 		let timestamp = ms(delta, { compact: true, formatSubMilliseconds: true })
 
-		let header = `${colors.blue('■')} ${stack} ${colors.dim(`+${timestamp}`)}\n`
-		args[0] = header + args[0]
-		args.push('\n')
+		let header = `${colors.blue('■')} ${colors.dim(`${stack} +${timestamp}`)}`
+		args[0] = `\n${header}\n${args[0]}`
 
 		return Reflect.apply(method, ctx, args)
 	},

@@ -1,11 +1,17 @@
 import * as http from 'https://deno.land/std/http/mod.ts'
 
+for (let envkey of ['M3U_URL']) {
+	if (!Deno.env.get(envkey)) {
+		throw new Error(`Undefined ${envkey} environment variable!`)
+	}
+}
+
 export async function get(request: http.ServerRequest) {
 	request.headers.delete('connection')
 	let response = await fetch(Deno.env.get('M3U_URL') as string, {
 		headers: request.headers,
 	})
-	let lines = (await response.text()).split('\n')
+	let lines = ((await response.text()) ?? '').split('\n')
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i]
 		if (line.includes('LATINO: ') || line.includes(' | SD')) {
