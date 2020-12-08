@@ -8,8 +8,8 @@ for (let envkey of ['EPG_URL', 'M3U_URL']) {
     }
 }
 
-const server = http.serve('127.0.0.1:18097')
 ;(async function main() {
+    const server = http.serve('127.0.0.1:18097')
     for await (let request of server) {
         if (request.url == '/get_m3u') {
             request.respond(await m3u.get(request))
