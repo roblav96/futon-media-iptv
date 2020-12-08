@@ -26,6 +26,7 @@ stop :
 	if [[ ! -e "{{daemon_path}}.pid" ]]; then exit 1; fi
 	kill -SIGTERM -$(cat "{{daemon_path}}.pid")
 	rm -v "{{daemon_path}}.pid"
+alias restart := start
 start :
 	if [[ -e "{{daemon_path}}.pid" ]]; then just stop; fi
 	daemonize -c "{{justfile_directory()}}" -e "{{daemon_path}}.log" -o "{{daemon_path}}.log" -a -p "{{daemon_path}}.pid" -l "{{daemon_path}}.pid" -- /usr/bin/env just run
