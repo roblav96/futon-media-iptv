@@ -1,7 +1,7 @@
 #!/usr/bin/env just --justfile
 # https://github.com/casey/just
 
-# set shell := ["bash", "-cu"]
+set shell := ["bash", "-cu"]
 
 export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
 install :
@@ -22,11 +22,11 @@ watch :
 
 daemon_path := "$HOME/.daemonize/futon-media-iptv"
 stop :
-	if [ ! -e "{{daemon_path}}.pid" ]; then exit 1; fi
+	if [[ ! -e "{{daemon_path}}.pid" ]]; then exit 1; fi
 	kill -SIGTERM -$(cat "{{daemon_path}}.pid")
 	rm -v "{{daemon_path}}.pid"
 start :
-	if [ -e "{{daemon_path}}.pid" ]; then just stop; fi
+	if [[ -e "{{daemon_path}}.pid" ]]; then just stop; fi
 	daemonize -c "{{justfile_directory()}}" -e "{{daemon_path}}.log" -o "{{daemon_path}}.log" -a -p "{{daemon_path}}.pid" -l "{{daemon_path}}.pid" -- /usr/bin/env just run
 	just logs 0
 logs lines="100" :
