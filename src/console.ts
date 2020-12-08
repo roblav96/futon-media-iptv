@@ -7,12 +7,13 @@ import * as path from 'https://deno.land/std/path/mod.ts'
 import * as printf from 'https://deno.land/std/fmt/printf.ts'
 import * as util from 'https://deno.land/std/node/util.ts'
 import { intercept } from 'https://deno.land/x/function_intercept/index.ts'
-import { repeat } from 'https://deno.land/x/pine/mod.ts'
 
 // @deno-types='https://cdn.skypack.dev/pretty-ms/dist=es2020,mode=types/index.d.ts'
 import ms from 'https://cdn.skypack.dev/pretty-ms'
 
-export const DEFAULT_INSPECT_OPTIONS = {
+Deno.core.print('\n')
+
+const DEFAULT_INSPECT_OPTIONS = {
 	colors: true,
 	compact: false,
 	depth: 4,
@@ -44,12 +45,8 @@ console.log = new Proxy(console.log, {
 	apply(method, ctx: Console, args: string[]) {
 		let e = { stack: '' }
 		Error.captureStackTrace(e, this.apply)
-		// Deno.core.print('\ne.stack -> ' + e.stack + '\n')
-
 		let stack = e.stack.split('\n')[1].trim()
-		// Deno.core.print('\nstack -> ' + stack + '\n')
 		let stacks = stack.split(' ')
-		// Deno.core.print('\nstacks -> ' + Deno.inspect(stacks) + '\n')
 		for (let i = 0; i < stacks.length; i++) {
 			if (i == 0) {
 				stacks[i] = colors.dim(stacks[i])
@@ -60,13 +57,6 @@ console.log = new Proxy(console.log, {
 			}
 		}
 		stack = stacks.join(' ')
-		// Deno.core.print('\nstack -> ' + stack + '\n')
-
-		let now = performance.now()
-		let delta = now - this.before
-		this.before = now
-		let timestamp = ms(delta, { compact: true, formatSubMilliseconds: true })
-		// Deno.core.print('\ntimestamp -> ' + timestamp + '\n')
 
 		for (let i = 0; i < args.length; i++) {
 			if (i == 0 && typeof args[0] == 'string') {
@@ -74,6 +64,11 @@ console.log = new Proxy(console.log, {
 			}
 			args[i] = Deno.inspect(args[i], DEFAULT_INSPECT_OPTIONS)
 		}
+
+		let now = performance.now()
+		let delta = now - this.before
+		this.before = now
+		let timestamp = ms(delta, { compact: true, formatSubMilliseconds: true })
 
 		let header = `${colors.blue('■')} ${stack} ${colors.dim(`+${timestamp}`)}\n`
 		args[0] = header + args[0]

@@ -8,17 +8,11 @@ for (let envkey of ['EPG_URL', 'M3U_URL']) {
     }
 }
 
-let t = performance.now()
 const server = http.serve('127.0.0.1:8080')
-console.log('server ->', server)
 ;(async function main() {
-    console.log('server.listener ->', server.listener)
-    console.log(performance.now() - t, 'performance.now')
     for await (let request of server) {
-        console.log('request.url ->', request.url)
         if (request.url == '/get_m3u') {
             request.respond(await m3u.get(request))
         }
     }
-})()
-console.log('Deno.cwd() ->', Deno.cwd())
+})().catch((error) => console.error('main catch -> %O', error))
