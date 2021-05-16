@@ -14,15 +14,16 @@ export async function get(request: http.ServerRequest) {
 	let lines = ((await response.text()) ?? '').split('\n')
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i]
-		if (line.includes('LATINO: ') || line.includes(' | SD')) {
+		if (line.includes('Latino') || line.includes(' SD')) {
 			lines.splice(i, 2)
 			i = i - 2
 		}
 	}
-	response.headers.delete('content-length')
+	let headers = new Headers(response.headers)
+	headers.delete('content-length')
 	return {
 		body: lines.join('\n'),
-		headers: response.headers,
+		headers,
 		status: response.status,
 	} as http.Response
 }
