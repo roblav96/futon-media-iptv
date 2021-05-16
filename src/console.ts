@@ -6,10 +6,7 @@ import * as log from 'https://deno.land/std/log/mod.ts'
 import * as path from 'https://deno.land/std/path/mod.ts'
 import * as printf from 'https://deno.land/std/fmt/printf.ts'
 import * as util from 'https://deno.land/std/node/util.ts'
-import { intercept } from 'https://deno.land/x/function_intercept/index.ts'
-
-// @deno-types='https://cdn.skypack.dev/pretty-ms/dist=es2020,mode=types/index.d.ts'
-import ms from 'https://cdn.skypack.dev/pretty-ms?dts'
+import ms from 'https://esm.sh/pretty-ms?dev'
 
 const DEFAULT_INSPECT_OPTIONS = {
 	colors: true,
@@ -158,6 +155,7 @@ declare global {
 
 //
 
+// import { intercept } from 'https://deno.land/x/function_intercept/index.ts'
 // console.log = intercept(console.log).before(function before(...args) {
 // 	Deno.core.print('\n')
 // 	Deno.core.print(Error.captureStackTrace(new Error(), before))
