@@ -14,7 +14,7 @@ export async function get(request: http.ServerRequest) {
 	let lines = ((await response.text()) ?? '').split('\n')
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i]
-		if (line.includes('Latino') || line.includes(' SD')) {
+		if (line.includes('Latin') || line.includes(' SD')) {
 			lines.splice(i, 2)
 			i = i - 2
 		}
