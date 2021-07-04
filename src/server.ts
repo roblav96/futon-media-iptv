@@ -4,7 +4,7 @@ import * as m3u from './m3u.ts'
 const server = http.serve('127.0.0.1:18097')
 for await (let request of server) {
 	try {
-		if (request.url == '/get_m3u') {
+		if (request.url == '/iptv.m3u') {
 			await request.respond(await m3u.get(request))
 		}
 	} catch (error) {

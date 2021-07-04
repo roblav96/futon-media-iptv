@@ -21,6 +21,8 @@ export async function get(request: http.ServerRequest) {
 	}
 	let headers = new Headers(response.headers)
 	headers.delete('content-length')
+	headers.delete('content-disposition')
+	headers.set('content-type','audio/x-mpegurl')
 	return {
 		body: lines.join('\n'),
 		headers,
