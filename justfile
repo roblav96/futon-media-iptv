@@ -1,16 +1,11 @@
 #!/usr/bin/env just --justfile
 # https://github.com/casey/just
 
+set dotenv-load := true
 set shell := ["bash", "-cu"]
 
-export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
-install :
-	rm -r -f node_modules
-	mkdir -p node_modules/.cache/deno
-	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
-	deno types --unstable > "$DENO_DIR/lib.deno.unstable.d.ts"
-	deno cache --unstable --reload src/mod.ts
-# ln -s "$DENO_DIR" node_modules/.cache/deno
+_default :
+	@just --dump
 
 lint :
 	deno lint --unstable src/*.ts
@@ -33,3 +28,14 @@ start :
 	just logs 0
 logs lines="100" :
 	tail -f -n {{lines}} "{{daemon_path}}.log"
+
+#
+
+# export DENO_DIR := justfile_directory() + "/node_modules/.cache/deno"
+# install :
+# 	rm -r -f node_modules
+# 	mkdir -p node_modules/.cache/deno
+# 	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
+# 	deno types --unstable > "$DENO_DIR/lib.deno.unstable.d.ts"
+# 	deno cache --unstable --reload src/mod.ts
+# # ln -s "$DENO_DIR" node_modules/.cache/deno
