@@ -23,7 +23,7 @@ export async function get(request: http.ServerRequest) {
 	headers.delete('alt-svc')
 	headers.delete('content-disposition')
 	headers.delete('content-length')
-	headers.set('content-type','application/x-mpegURL')
+	headers.set('content-type','application/x-mpegurl')
 	return {
 		body: lines.join('\n'),
 		headers,
