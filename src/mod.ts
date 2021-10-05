@@ -1,3 +1,3 @@
-import './console.ts'
+// import './console.ts'
 
 import('./server.ts')

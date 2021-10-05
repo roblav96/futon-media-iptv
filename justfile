@@ -1,8 +1,8 @@
 #!/usr/bin/env just --justfile
 # https://github.com/casey/just
 
+set shell := ["bash", "-uc"]
 set dotenv-load := true
-set shell := ["bash", "-cu"]
 
 _default :
 	@just --dump
