@@ -6,11 +6,10 @@ for (let envkey of ['M3U_URL']) {
 	}
 }
 
-export async function get(request: http.ServerRequest) {
-	request.headers.delete('connection')
-	let response = await fetch(Deno.env.get('M3U_URL') as string, {
-		headers: request.headers,
-	})
+export async function get(request: Request) {
+	let headers = new Headers(request.headers)
+	headers.delete('connection')
+	let response = await fetch(Deno.env.get('M3U_URL') as string, { headers })
 	let lines = ((await response.text()) ?? '').split('\n')
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i]
@@ -19,14 +18,12 @@ export async function get(request: http.ServerRequest) {
 			i = i - 2
 		}
 	}
-	let headers = new Headers(response.headers)
+	headers = new Headers(response.headers)
 	headers.delete('alt-svc')
-	headers.delete('content-disposition')
 	headers.delete('content-length')
 	headers.set('content-type', 'application/x-mpegURL')
-	return {
-		body: lines.join('\n'),
+	return new Response(lines.join('\n'), {
 		headers,
 		status: response.status,
-	} as http.Response
+	})
 }
