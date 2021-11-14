@@ -5,25 +5,51 @@ for (let envkey of ['M3U_URL']) {
 		throw new Error(`Undefined ${envkey} environment variable!`)
 	}
 }
+const M3U_URL = Deno.env.get('M3U_URL')!
+
+const GROUPS = [
+	'MLB',
+	'NBA League Pass',
+	'NFL',
+	'NHL',
+	'PPV',
+	'Supersport',
+	'United Kingdom Club Football',
+	'United Kingdom Sports',
+	'US MLB',
+	'US NBA',
+	'US NFL',
+	'US Sports',
+	'USA FHD',
+	'Xfinity',
+]
+// console.log('GROUPS ->', GROUPS)
+
+// localStorage.clear()
 
 export async function get(request: Request) {
-	let headers = new Headers(request.headers)
-	headers.delete('connection')
-	let response = await fetch(Deno.env.get('M3U_URL') as string, { headers })
-	let lines = ((await response.text()) ?? '').split('\n')
-	for (let i = 0; i < lines.length; i++) {
-		let line = lines[i]
-		if (line.includes('Latin') || line.includes('PT ') || line.includes(' SD')) {
-			lines.splice(i, 2)
-			i = i - 2
-		}
+	let lskeys = Array.from(Array(localStorage.length), (v, i) => localStorage.key(i)!)
+	let lskey = lskeys.find((v) => parseInt(v) > Date.now())!
+	let text = localStorage.getItem(lskey)
+	if (!text) {
+		text = await (await fetch(M3U_URL)).text()
+		localStorage.clear()
+		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(60)}`, text)
 	}
-	headers = new Headers(response.headers)
-	headers.delete('alt-svc')
-	headers.delete('content-length')
-	headers.set('content-type', 'application/x-mpegURL')
-	return new Response(lines.join('\n'), {
-		headers,
-		status: response.status,
+
+	const EXTINF = '#EXTINF:-1 '
+	let lines = text.split(EXTINF)
+	let extm3u = lines.shift()!
+	let groups = GROUPS.map((v) => `group-title="${v}"`)
+	lines = lines.filter((line) => {
+		if (line.includes('Latin') || line.includes(' (ES)')) return
+		if (line.includes(' SD') || line.includes(' (SD)')) return
+		return groups.find((v) => line.includes(v))
+	})
+
+	return new Response([extm3u, ...lines].join(EXTINF), {
+		headers: new Headers({
+			'content-type': 'application/x-mpegURL',
+		}),
 	})
 }

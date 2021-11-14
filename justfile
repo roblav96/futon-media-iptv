@@ -7,14 +7,15 @@ set dotenv-load := true
 _default :
 	@just --dump
 
-lint :
-	deno lint --unstable src/*.ts
+
 
 run :
-	@deno cache --unstable --no-check src/mod.ts || true
-	deno run --unstable --no-check --allow-all src/mod.ts
+	@deno cache --unstable --no-check src/*.ts || true
+	deno run --unstable --no-check --allow-all src/server.ts
 watch :
-	watchexec --restart -- 'printf "\ec\e[3J"; just run'
+	watchexec --no-default-ignore --restart --watch=src --exts=ts -- 'tput clear; echo "█ "; just run'
+
+
 
 daemon_path := "$HOME/.daemonize/futon-media-iptv"
 stop :
