@@ -1,11 +1,7 @@
-import * as http from 'https://deno.land/std/http/mod.ts'
+export const PATHNAME = 'iptv.m3u'
 
-for (let envkey of ['M3U_URL']) {
-	if (!Deno.env.get(envkey)) {
-		throw new Error(`Undefined ${envkey} environment variable!`)
-	}
-}
 const M3U_URL = Deno.env.get('M3U_URL')!
+if (!M3U_URL) throw new Error('!M3U_URL')
 
 const GROUPS = [
 	'MLB',
@@ -23,9 +19,8 @@ const GROUPS = [
 	'USA FHD',
 	'Xfinity',
 ]
-// console.log('GROUPS ->', GROUPS)
 
-// localStorage.clear()
+// console.log('localStorage.clear() ->', localStorage.clear())
 
 export async function get(request: Request) {
 	let lskeys = Array.from(Array(localStorage.length), (v, i) => localStorage.key(i)!)
@@ -47,9 +42,16 @@ export async function get(request: Request) {
 		return groups.find((v) => line.includes(v))
 	})
 
+	if (Deno.env.get('DENO_ENV') == 'development') {
+		lines = lines.filter((line) => {
+			return line.includes('group-title="USA FHD"') && !line.includes('tvg-id=""')
+		})
+	}
+
 	return new Response([extm3u, ...lines].join(EXTINF), {
 		headers: new Headers({
-			'content-type': 'application/x-mpegURL',
+			'content-disposition': `attachment; filename=${PATHNAME}`,
+			'content-type': 'audio/x-mpegurl',
 		}),
 	})
 }
