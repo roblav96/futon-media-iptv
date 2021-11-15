@@ -11,9 +11,10 @@ _default :
 
 run :
 	@deno cache --unstable --no-check src/*.ts || true
+	@echo -n "█ "
 	deno run --unstable --no-check --allow-all src/server.ts
 watch :
-	watchexec --no-default-ignore --restart --watch=src --exts=ts -- 'tput clear; echo "█ "; just run'
+	watchexec --clear --restart --watch=src --exts=ts -- just run
 
 
 
