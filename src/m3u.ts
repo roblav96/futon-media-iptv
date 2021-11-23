@@ -27,9 +27,9 @@ export async function get(request: Request) {
 	let lskey = lskeys.find((v) => parseInt(v) > Date.now())!
 	let text = localStorage.getItem(lskey)
 	if (!text) {
-		console.time('fetch(M3U_URL)')
+		console.time(`fetch(${M3U_URL})`)
 		text = await (await fetch(M3U_URL)).text()
-		console.timeEnd('fetch(M3U_URL)')
+		console.timeEnd(`fetch(${M3U_URL})`)
 		localStorage.clear()
 		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(60)}`, text)
 	}
