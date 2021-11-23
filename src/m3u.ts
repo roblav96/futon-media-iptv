@@ -31,7 +31,7 @@ export async function get(request: Request) {
 		text = await (await fetch(M3U_URL)).text()
 		console.timeEnd('fetch(M3U_URL)')
 		localStorage.clear()
-		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(60)}`, text)
+		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(10)}`, text)
 	}
 
 	const EXTINF = '#EXTINF:-1 '
