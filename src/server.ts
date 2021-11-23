@@ -5,11 +5,11 @@ http.serve(
 	async (request) => {
 		try {
 			let url = new URL(request.url)
-			if (url.pathname.endsWith(m3u.PATHNAME)) {
+			if (url.pathname.endsWith(m3u.FILENAME)) {
 				return await m3u.get(request)
 			}
 		} catch (error) {
-			console.error('request -> %O', error)
+			console.error('http.serve request -> %O', error)
 			return new Response(error.toString(), {
 				status: http.Status.InternalServerError,
 			})

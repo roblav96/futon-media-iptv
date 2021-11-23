@@ -1,4 +1,4 @@
-export const PATHNAME = 'iptv.m3u'
+export const FILENAME = 'iptv.m3u'
 
 const M3U_URL = Deno.env.get('M3U_URL')!
 if (!M3U_URL) throw new Error('!M3U_URL')
@@ -11,7 +11,7 @@ const GROUPS = [
 	'PPV',
 	'Supersport',
 	'United Kingdom Club Football',
-	'United Kingdom Sports',
+	// 'United Kingdom Sports',
 	'US MLB',
 	'US NBA',
 	'US NFL',
@@ -20,14 +20,16 @@ const GROUPS = [
 	'Xfinity',
 ]
 
-// console.log('localStorage.clear() ->', localStorage.clear())
+console.log('localStorage.clear() ->', localStorage.clear())
 
 export async function get(request: Request) {
 	let lskeys = Array.from(Array(localStorage.length), (v, i) => localStorage.key(i)!)
 	let lskey = lskeys.find((v) => parseInt(v) > Date.now())!
 	let text = localStorage.getItem(lskey)
 	if (!text) {
+		Deno.env.get('DENO_ENV') == 'development' && console.time('fetch(M3U_URL)')
 		text = await (await fetch(M3U_URL)).text()
+		Deno.env.get('DENO_ENV') == 'development' && console.timeEnd('fetch(M3U_URL)')
 		localStorage.clear()
 		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(60)}`, text)
 	}
@@ -50,7 +52,7 @@ export async function get(request: Request) {
 
 	return new Response([extm3u, ...lines].join(EXTINF), {
 		headers: new Headers({
-			'content-disposition': `attachment; filename=${PATHNAME}`,
+			'content-disposition': `attachment; filename=${FILENAME}`,
 			'content-type': 'audio/x-mpegurl',
 		}),
 	})
