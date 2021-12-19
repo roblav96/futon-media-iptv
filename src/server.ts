@@ -18,5 +18,5 @@ http.serve(
 			status: http.Status.NotFound,
 		})
 	},
-	{ addr: '127.0.0.1:18097' },
+	{ hostname: '127.0.0.1', port: 18097 },
 )
