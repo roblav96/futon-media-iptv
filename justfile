@@ -12,7 +12,7 @@ _default :
 run :
 	@deno cache --unstable --no-check src/*.ts || true
 	@echo -n "█ "
-	deno run --unstable --no-check --allow-all src/server.ts
+	deno run --unstable --allow-all src/server.ts
 watch :
 	watchexec --clear --restart --watch=src --exts=ts -- just run
 
