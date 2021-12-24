@@ -34,6 +34,7 @@ export async function get(request: Request) {
 		localStorage.setItem(`${Date.now() + new Date(0).setUTCMinutes(10)}`, text)
 	}
 
+	console.time('lines.filter')
 	const EXTINF = '#EXTINF:-1 '
 	let lines = text.split(EXTINF)
 	let extm3u = lines.shift()!
@@ -43,12 +44,12 @@ export async function get(request: Request) {
 		if (line.includes(' SD') || line.includes(' (SD)')) return
 		return groups.find((v) => line.includes(v))
 	})
-
 	if (Deno.env.get('DENO_ENV') == 'development') {
 		lines = lines.filter((line) => {
 			return line.includes('group-title="USA FHD"') && !line.includes('tvg-id=""')
 		})
 	}
+	console.timeEnd('lines.filter')
 
 	return new Response([extm3u, ...lines].join(EXTINF), {
 		headers: new Headers({
