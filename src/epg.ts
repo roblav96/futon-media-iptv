@@ -10,6 +10,7 @@ import { xml2js } from 'https://deno.land/x/xml2js/mod.ts'
 export const FILENAME = 'utc.lite.xml'
 
 // console.log('localStorage.clear() ->', localStorage.clear())
+// console.log('await get() ->', await get())
 
 export async function get() {
 	const BASENAME = path.basename(import.meta.url)
@@ -43,7 +44,7 @@ export async function get() {
 	})
 	// console.log('js.tv.programme ->', js.tv.programme)
 
-	storage.text = js2xml(js, { spaces: 2 })
+	storage.text = js2xml(js, { compact: true, spaces: 2 })
 	storage.date = Date.now() + new Date(0).setUTCMinutes(59)
 	localStorage.removeItem(BASENAME)
 	localStorage.setItem(BASENAME, JSON.stringify(storage))

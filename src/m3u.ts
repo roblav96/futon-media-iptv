@@ -9,6 +9,7 @@ const M3U_URL = Deno.env.get('M3U_URL')!
 assertExists(M3U_URL, `!Deno.env.get('M3U_URL')`)
 
 // console.log('localStorage.clear() ->', localStorage.clear())
+// console.log('await get() ->', await get())
 
 export async function get() {
 	const BASENAME = path.basename(import.meta.url)

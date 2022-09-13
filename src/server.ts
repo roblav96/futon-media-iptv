@@ -2,6 +2,8 @@ import * as epg from './epg.ts'
 import * as http from 'https://deno.land/std/http/mod.ts'
 import * as m3u from './m3u.ts'
 
+console.log('localStorage.clear() ->', localStorage.clear())
+
 http.serve(
 	async (request) => {
 		try {
