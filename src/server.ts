@@ -8,6 +8,7 @@ http.serve(
 	async (request) => {
 		try {
 			let url = new URL(request.url)
+			console.log('request ->', url)
 			if (url.pathname.endsWith(m3u.FILENAME)) {
 				return new Response((await m3u.get()).m3u, {
 					headers: new Headers({
