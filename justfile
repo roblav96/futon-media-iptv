@@ -10,7 +10,7 @@ _default :
 
 
 install:
-	deno cache --unstable --no-check --reload src/*.ts
+	fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check --reload
 
 run main:
 	@echo "█ "
@@ -18,7 +18,7 @@ run main:
 	-@setsid --fork deno check --unstable --quiet {{main}}
 	-@deno run --unstable --no-check --allow-all {{main}}
 watch main:
-	watchexec --no-project-ignore --clear --restart --shell=none --watch=src --exts=ts -- just run {{main}}
+	watchexec --clear --restart --shell=none --watch=src --exts=ts -- just run {{main}}
 
 
 
