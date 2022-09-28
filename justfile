@@ -4,21 +4,17 @@
 # set dotenv-load
 set shell := ["bash", "-uc"]
 
-_default :
-	@just --dump
-
 
 
 install:
 	fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check --reload
 
 run main:
-	@echo "█ "
-	-@setsid --fork deno cache --unstable --no-check src/*.ts
+	-@setsid --fork fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check
 	-@setsid --fork deno check --unstable --quiet {{main}}
 	-@deno run --unstable --no-check --allow-all {{main}}
 watch main:
-	watchexec --clear --restart --shell=none --watch=src --exts=ts -- just run {{main}}
+	watchexec --clear --restart --shell=bash --watch=src --exts=ts -- 'echo -e "█ \n" && just run {{main}}'
 
 
 

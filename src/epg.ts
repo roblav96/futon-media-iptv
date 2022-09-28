@@ -9,6 +9,9 @@ import { xml2js } from 'https://deno.land/x/xml2js/mod.ts'
 
 export const FILENAME = 'utc.lite.xml'
 
+const EPG_URL = Deno.env.get('EPG_URL')!
+assertExists(EPG_URL, `!Deno.env.get('EPG_URL')`)
+
 // console.log('localStorage.clear() ->', localStorage.clear())
 // console.log('await get() ->', await get())
 
@@ -26,9 +29,7 @@ export async function get() {
 		return storage.text
 	}
 
-	const res = await fetch(
-		'https://raw.githubusercontent.com/Apollo2000/TVGuide/master/utc.lite.xml.gz',
-	)
+	const res = await fetch(EPG_URL)
 	assertExists(res.body, '!res.body')
 	const stream = res.body.pipeThrough(new DecompressionStream('gzip')).getReader()
 	const text = new TextDecoder().decode(await readAll(readerFromStreamReader(stream)))
