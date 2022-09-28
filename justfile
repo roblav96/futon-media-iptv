@@ -14,7 +14,7 @@ run main:
 	-@setsid --fork deno check --unstable --quiet {{main}}
 	-@deno run --unstable --no-check --allow-all {{main}}
 watch main:
-	watchexec --clear --restart --shell=bash --watch=src --exts=ts -- 'echo -e "█ \n" && just run {{main}}'
+	watchexec --clear --restart --shell=bash --watch=src --exts=ts -- 'echo -e "█ " && just run {{main}}'
 
 
 

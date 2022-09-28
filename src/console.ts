@@ -32,7 +32,7 @@ let root_path = import.meta.url
 try {
 	if (Deno.mainModule) {
 		root_path = path.dirname(path.fromFileUrl(Deno.mainModule))
-		Deno.core.print(`████  ${datetime.format(new Date(), 'hh:mm:ss a')}  ████\n\n`)
+		Deno.core.print(`\n████  ${datetime.format(new Date(), 'hh:mm:ss a')}  ████\n\n`)
 	}
 	if (path.isAbsolute(Deno.cwd())) {
 		root_path = Deno.cwd()
