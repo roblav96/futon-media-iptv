@@ -4,6 +4,15 @@ import * as path from 'https://deno.land/std/path/mod.ts'
 import ansi from 'https://esm.sh/ansi-regex?dev'
 import ms from 'https://esm.sh/pretty-ms?dev'
 
+globalThis.addEventListener('error', (event) => {
+	event.preventDefault()
+	console.error('[UNCAUGHT EXCEPTION]', event.error)
+})
+globalThis.addEventListener('unhandledrejection', (event) => {
+	event.preventDefault()
+	console.error('[UNHANDLED REJECTION]', event.reason)
+})
+
 const LOG_SYMBOLS = {
 	log: '🟦',
 	info: '🟩',
@@ -134,13 +143,6 @@ for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYM
 	})
 }
 
-globalThis.addEventListener('error', (event) => {
-	console.error('[UNCAUGHT EXCEPTION]', event.error)
-})
-globalThis.addEventListener('unhandledrejection', (event) => {
-	console.error('[UNHANDLED REJECTION]', event.reason)
-})
-
 const TIMERS = new Map()
 Object.assign(console, {
 	time(label: string) {
@@ -157,7 +159,8 @@ Object.assign(console, {
 		}
 		let duration = performance.now() - TIMERS.get(label)
 		TIMERS.delete(label)
-		console.info(`${label}: ${ms(duration, { compact: true, formatSubMilliseconds: true })}`)
+		let timestamp = ms(duration, { compact: true, formatSubMilliseconds: true })
+		console.info(`${label}: ${parseInt(timestamp)} ${timestamp.replace(/[^a-z\s]/gi, '')}`)
 	},
 	async dts(data, identifier) {
 		let dts = await (import(`${'https://esm.sh/dts-generate?no-check'}`) as Promise<
