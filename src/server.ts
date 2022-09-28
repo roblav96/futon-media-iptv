@@ -7,9 +7,9 @@ console.log('localStorage.clear() ->', localStorage.clear())
 http.serve(
 	async (request) => {
 		try {
-			let url = new URL(request.url)
+			const pathname = new URL(request.url).pathname
 			console.log('request ->', request.url)
-			if (url.pathname.endsWith(m3u.FILENAME)) {
+			if (pathname.endsWith(m3u.FILENAME)) {
 				return new Response((await m3u.get()).m3u, {
 					headers: new Headers({
 						'content-disposition': `inline; filename="${m3u.FILENAME}"`,
@@ -17,7 +17,7 @@ http.serve(
 					}),
 				})
 			}
-			if (url.pathname.endsWith(epg.FILENAME)) {
+			if (pathname.endsWith(epg.FILENAME)) {
 				return new Response(await epg.get(), {
 					headers: new Headers({
 						'content-type': 'text/xml',

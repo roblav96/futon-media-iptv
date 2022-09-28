@@ -134,6 +134,13 @@ for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYM
 	})
 }
 
+globalThis.addEventListener('error', (event) => {
+	console.error(`[UNCAUGHT EXCEPTION]\n`, event.error)
+})
+globalThis.addEventListener('unhandledrejection', (event) => {
+	console.error(`[UNHANDLED REJECTION]\n`, event.reason)
+})
+
 const TIMERS = new Map()
 Object.assign(console, {
 	time(label: string) {
