@@ -11,13 +11,8 @@ import { xml2js } from 'https://deno.land/x/xml2js/mod.ts'
 const EPG_URL = Deno.env.get('EPG_URL')!
 assertExists(EPG_URL, `!Deno.env.get('EPG_URL')`)
 
-// console.log('localStorage.clear() ->', localStorage.clear())
-// console.log('await get() ->', await get())
-
 export async function get({ force = false } = {}) {
-	console.time('db.get')
 	let text = await db.get(import.meta.url)
-	console.timeEnd('db.get')
 	if (!text || force == true) {
 		let res = await fetch(EPG_URL)
 		assertExists(res.body, '!res.body')

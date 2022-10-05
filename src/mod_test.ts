@@ -1,0 +1,7 @@
+console.time('fetch')
+const response = await fetch('http://127.0.0.1:18097/livetv.m3u')
+console.timeEnd('fetch')
+console.time('response.text')
+const text = await response.text()
+console.timeEnd('response.text')
+console.log('response.text.length ->', text.length)

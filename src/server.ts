@@ -1,7 +1,7 @@
 import * as epg from './epg.ts'
-import * as what from 'https://deno.land/x/is_what/src/index.ts'
 import * as http from 'https://deno.land/std/http/mod.ts'
 import * as m3u from './m3u.ts'
+import * as what from 'https://deno.land/x/is_what/src/index.ts'
 
 const ROUTES = {
 	'/livetv.m3u': async (request) => {
@@ -21,28 +21,26 @@ const ROUTES = {
 	},
 } as Record<string, Deno.ServeHandler>
 
-// export function serve() {
-	Deno.serve({ hostname: '127.0.0.1', port: 18097 }, async (request) => {
+http.serve(
+	async (request) => {
 		try {
-			console.info('request ->', request.url)
-			let pathname = new URL(request.url).pathname
-			let handler = ROUTES[pathname]
-			if (typeof handler == 'function') {
+			console.log('request ->', request.url)
+			let handler = ROUTES[new URL(request.url).pathname]
+			if (what.getType(handler) == 'AsyncFunction') {
+				return await handler(request)
 			}
-			for (let [route, handler] of Object.entries(ROUTES)) {
-				if (pathname.endsWith(route)) {
-					console.warn('pathname.endsWith ->')
-					return await handler(request)
-				}
+			if (what.getType(handler) == 'Function') {
+				return handler(request)
 			}
+			return new Response(http.STATUS_TEXT[http.Status.NotFound], {
+				status: http.Status.NotFound,
+			})
 		} catch (error) {
 			console.error('http.serve request -> %O', error)
 			return new Response(error.toString(), {
 				status: http.Status.InternalServerError,
 			})
 		}
-		return new Response(http.STATUS_TEXT[http.Status.NotFound], {
-			status: http.Status.NotFound,
-		})
-	})
-// }
+	},
+	{ hostname: '127.0.0.1', port: 18097 },
+)

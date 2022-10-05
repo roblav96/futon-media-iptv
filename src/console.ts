@@ -159,8 +159,7 @@ Object.assign(console, {
 		}
 		let duration = performance.now() - TIMERS.get(label)
 		TIMERS.delete(label)
-		let timestamp = ms(duration, { compact: true, formatSubMilliseconds: true })
-		console.info(`${label}: ${parseInt(timestamp)} ${timestamp.replace(/[^a-z\s]/gi, '')}`)
+		console.info(`${label}: ${ms(duration, { compact: true, formatSubMilliseconds: true })}`)
 	},
 	async dts(data, identifier) {
 		let dts = await (import(`${'https://esm.sh/dts-generate?no-check'}`) as Promise<
