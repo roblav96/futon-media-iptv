@@ -36,24 +36,24 @@ const DEFAULT_INSPECT_OPTIONS = {
 const ANSI_REGEX = ansi({ onlyFirst: true })
 const EOL_REGEX = /(?:\r?\n)/
 
-// let root_path = path.dirname(path.dirname(path.dirname(path.fromFileUrl(import.meta.url))))
-let root_path = import.meta.url
+// let cwd = path.dirname(path.dirname(path.dirname(path.fromFileUrl(import.meta.url))))
+let cwd = import.meta.url
 try {
 	if (Deno.mainModule) {
-		root_path = path.dirname(path.fromFileUrl(Deno.mainModule))
+		cwd = path.dirname(path.fromFileUrl(Deno.mainModule))
 		Deno.core.print(`\n████  ${datetime.format(new Date(), 'hh:mm:ss a')}  ████\n\n`)
 	}
 	if (path.isAbsolute(Deno.cwd())) {
-		root_path = Deno.cwd()
+		cwd = Deno.cwd()
 	}
 } catch {}
 
-let now_stamp = performance.now()
+let now = performance.now()
 for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYMBOLS, string][]) {
 	Object.assign(console, {
 		[level]: new Proxy(console[level], {
 			apply(method, ctx: Console, args: string[]) {
-				let delta = performance.now() - now_stamp
+				let delta = performance.now() - now
 
 				let e = { stack: '' }
 				Error.captureStackTrace(e, this.apply)
@@ -76,8 +76,8 @@ for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYM
 					} else if (i == stacks.length - 1) {
 						let frame = stacks[i]
 						if (frame.includes('file:')) {
-							if (frame.includes(`file://${root_path}/`)) {
-								frame = frame.replace(`file://${root_path}/`, '')
+							if (frame.includes(`file://${cwd}/`)) {
+								frame = frame.replace(`file://${cwd}/`, '')
 							}
 							frame = frame.replace(
 								/[(]?<(.+)>:(\d+):(\d+)[)]?/,
@@ -101,7 +101,7 @@ for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYM
 					let arg = args[i]
 					if (typeof arg == 'string') {
 						if (i == 0) {
-							if (level == 'error') {
+							if (level == 'error' && args.length > 1) {
 								args[i] = colors.bgRed(colors.bold(arg))
 							}
 							continue
@@ -135,7 +135,7 @@ for (let [level, symbol] of Object.entries(LOG_SYMBOLS) as [keyof typeof LOG_SYM
 				}
 				args.push('\n')
 
-				now_stamp = performance.now()
+				now = performance.now()
 				// @ts-ignore
 				return Reflect.apply(...arguments)
 			},
