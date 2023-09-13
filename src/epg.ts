@@ -5,7 +5,6 @@ import db from './storage.ts'
 import { assertExists } from 'https://deno.land/std/testing/asserts.ts'
 import { hourly } from 'https://deno.land/x/deno_cron/cron.ts'
 import { js2xml } from 'https://deno.land/x/js2xml/mod.ts'
-import { readAll, readerFromStreamReader } from 'https://deno.land/std/streams/conversion.ts'
 import { xml2js } from 'https://deno.land/x/xml2js/mod.ts'
 
 const EPG_URL = Deno.env.get('EPG_URL')!
@@ -14,10 +13,7 @@ assertExists(EPG_URL, `!Deno.env.get('EPG_URL')`)
 export async function get({ force = false } = {}) {
 	let text = await db.get(import.meta.url)
 	if (!text || force == true) {
-		let res = await fetch(EPG_URL)
-		assertExists(res.body, '!res.body')
-		let stream = res.body.pipeThrough(new DecompressionStream('gzip')).getReader()
-		text = new TextDecoder().decode(await readAll(readerFromStreamReader(stream)))
+		text = await (await fetch(EPG_URL)).text()
 
 		let { tvgids } = await m3u.get()
 		let js = xml2js(text, { compact: true }) as any

@@ -1,46 +1,75 @@
 import * as epg from './epg.ts'
-import * as http from 'https://deno.land/std/http/mod.ts'
 import * as m3u from './m3u.ts'
-import * as what from 'https://deno.land/x/is_what/src/index.ts'
+import { errors, isHttpError } from 'https://deno.land/std/http/http_errors.ts'
+import { router, HandlerContext } from 'https://deno.land/x/rutt/mod.ts'
+import { Status } from 'https://deno.land/std/http/http_status.ts'
 
-const ROUTES = {
-	'/livetv.m3u': async (request) => {
-		return new Response((await m3u.get()).m3u, {
-			headers: new Headers({
-				'content-disposition': 'inline; filename="livetv.m3u"',
-				'content-type': 'audio/mpegurl',
-			}),
-		})
-	},
-	'/utc.lite.xml': async (request) => {
-		return new Response(await epg.get(), {
-			headers: new Headers({
-				'content-type': 'text/xml',
-			}),
-		})
-	},
-} as Record<string, Deno.ServeHandler>
+const routes = router<Ctx>(
+	{
+		'/livetv.m3u': async (req, ctx) => {
+			const body = (await m3u.get()).m3u
+			ctx.headers.set('content-disposition', 'inline; filename="livetv.m3u"')
+			ctx.headers.set('content-type', 'audio/mpegurl')
+			return new Response(body, { headers: ctx.headers })
+		},
 
-http.serve(
-	async (request) => {
-		try {
-			console.log('request ->', request.url)
-			let handler = ROUTES[new URL(request.url).pathname]
-			if (what.getType(handler) == 'AsyncFunction') {
-				return await handler(request)
-			}
-			if (what.getType(handler) == 'Function') {
-				return handler(request)
-			}
-			return new Response(http.STATUS_TEXT[http.Status.NotFound], {
-				status: http.Status.NotFound,
-			})
-		} catch (error) {
-			console.error('http.serve request -> %O', error)
-			return new Response(error.toString(), {
-				status: http.Status.InternalServerError,
-			})
-		}
+		'/utc.lite.xml': async (req, ctx) => {
+			const body = await epg.get()
+			ctx.headers.set('content-type', 'text/xml')
+			return new Response(body, { headers: ctx.headers })
+		},
+
+		'/favicon.ico': (req, ctx) => new Response(null, { headers: ctx.headers }),
 	},
-	{ hostname: '127.0.0.1', port: 18097 },
+	{
+		errorHandler: (req, ctx, error) => {
+			console.error('errorHandler ->', req.method, req.url, error)
+			if (isHttpError(error)) {
+				return new Response(error.message, {
+					status: error.status,
+					statusText: error.name,
+					headers: ctx.headers,
+				})
+			}
+			return new Response(null, { headers: ctx.headers })
+		},
+		otherHandler: (req, ctx) => {
+			console.warn('otherHandler ->', req.method, req.url)
+			return new Response(null, { headers: ctx.headers })
+		},
+		unknownMethodHandler: (req, ctx) => {
+			console.warn('unknownMethodHandler ->', req.method, req.url)
+			return new Response(null, { headers: ctx.headers })
+		},
+	}
 )
+
+Deno.serve(
+	{
+		...(!Deno.env.get('DENO_DEPLOYMENT_ID') && { hostname: '127.0.0.1', port: 18097 }),
+	},
+	(req, ctx) => {
+		Object.assign(ctx, {
+			headers: new Headers({
+				'access-control-allow-origin': '*',
+				'access-control-request-headers': '*',
+				'access-control-request-method': '*',
+			}),
+		})
+
+		if (req.method == 'OPTIONS') {
+			return new Response(null, { headers: (ctx as any).headers })
+		}
+
+		return routes(req, ctx as any)
+	}
+)
+
+export type Ctx = {
+	headers: Headers
+}
+export type Handler = (
+	req: Request,
+	ctx: HandlerContext<Ctx>,
+	match: Record<string, string>
+) => Response | Promise<Response>
