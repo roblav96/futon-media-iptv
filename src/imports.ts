@@ -1,15 +1,15 @@
-/** // @deno-types='https://raw.githubusercontent.com/sindresorhus/pretty-ms/master/index.d.ts'
-import ms from 'https://cdn.skypack.dev/pretty-ms'
+// // @deno-types='https://raw.githubusercontent.com/sindresorhus/pretty-ms/master/index.d.ts'
+// import ms from 'https://cdn.skypack.dev/pretty-ms'
 
-// import * as R from 'https://raw.githubusercontent.com/selfrefactor/rambdax/master/dist/rambdax.esm.js'
-// import 'https://raw.githubusercontent.com/selfrefactor/rambdax/master/_ts-toolbelt/src/ts-toolbelt'
-// deno-types='https://raw.githubusercontent.com/selfrefactor/rambdax/master/index.d.ts'
-// deno-types='https://cdn.skypack.dev/rambdax/dist=es2020,mode=types/index.d.ts'
+// // import * as R from 'https://raw.githubusercontent.com/selfrefactor/rambdax/master/dist/rambdax.esm.js'
+// // import 'https://raw.githubusercontent.com/selfrefactor/rambdax/master/_ts-toolbelt/src/ts-toolbelt'
+// // deno-types='https://raw.githubusercontent.com/selfrefactor/rambdax/master/index.d.ts'
+// // deno-types='https://cdn.skypack.dev/rambdax/dist=es2020,mode=types/index.d.ts'
 
-// @deno-types='../node_modules/rambdax/index.d.ts'
-import * as R from '../node_modules/rambdax/index.d.ts'
-R.add
-Deno.core.print('\nR -> ' + Deno.inspect(R) + '\n') */
+// // @deno-types='../node_modules/rambdax/index.d.ts'
+// import * as R from '../node_modules/rambdax/index.d.ts'
+// R.add
+// Deno.core.print('\nR -> ' + Deno.inspect(R) + '\n')
 
 //
 
