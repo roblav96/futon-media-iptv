@@ -40,7 +40,7 @@ const routes = router<Ctx>(
 
 Deno.serve(
 	{
-		...(!Deno.env.get('DENO_DEPLOYMENT_ID') && { hostname: '127.0.0.1', port: 56167 }),
+		...(!Deno.env.get('DENO_DEPLOYMENT_ID') && { hostname: '127.0.0.1', port: 18097 }),
 	},
 	(req, ctx) => {
 		Object.assign(ctx, {
