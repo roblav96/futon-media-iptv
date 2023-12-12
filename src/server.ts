@@ -1,8 +1,7 @@
 import * as epg from './epg.ts'
 import * as m3u from './m3u.ts'
-import { errors, isHttpError } from 'https://deno.land/std/http/http_errors.ts'
 import { router, HandlerContext } from 'https://deno.land/x/rutt/mod.ts'
-import { Status } from 'https://deno.land/std/http/http_status.ts'
+import { STATUS_CODE, STATUS_TEXT } from 'https://deno.land/std/http/status.ts'
 
 const routes = router<Ctx>(
 	{
@@ -22,47 +21,45 @@ const routes = router<Ctx>(
 		'/favicon.ico': (req, ctx) => new Response(null, { headers: ctx.headers }),
 	},
 	{
-		errorHandler: (req, ctx, error) => {
+		errorHandler: (req, ctx, error: any) => {
 			console.error('errorHandler ->', req.method, req.url, error)
-			if (isHttpError(error)) {
-				return new Response(error.message, {
-					status: error.status,
-					statusText: error.name,
-					headers: ctx.headers,
-				})
-			}
-			return new Response(null, { headers: ctx.headers })
+			return new Response(error?.message ?? null, {
+				headers: ctx.headers,
+				status: STATUS_CODE.InternalServerError,
+			})
 		},
 		otherHandler: (req, ctx) => {
 			console.warn('otherHandler ->', req.method, req.url)
-			return new Response(null, { headers: ctx.headers })
+			return new Response(null, {
+				headers: ctx.headers,
+				status: STATUS_CODE.NotFound,
+			})
 		},
-		unknownMethodHandler: (req, ctx) => {
-			console.warn('unknownMethodHandler ->', req.method, req.url)
-			return new Response(null, { headers: ctx.headers })
-		},
-	}
+	},
 )
 
 Deno.serve(
 	{
-		...(!Deno.env.get('DENO_DEPLOYMENT_ID') && { hostname: '127.0.0.1', port: 18097 }),
+		...(!Deno.env.get('DENO_DEPLOYMENT_ID') && { hostname: '127.0.0.1', port: 56167 }),
 	},
 	(req, ctx) => {
 		Object.assign(ctx, {
 			headers: new Headers({
+				'access-control-allow-headers': '*',
+				'access-control-allow-methods': '*',
 				'access-control-allow-origin': '*',
-				'access-control-request-headers': '*',
-				'access-control-request-method': '*',
 			}),
-		})
+		} as Ctx)
 
 		if (req.method == 'OPTIONS') {
-			return new Response(null, { headers: (ctx as any).headers })
+			return new Response(null, {
+				headers: (ctx as any).headers,
+				status: STATUS_CODE.NoContent,
+			})
 		}
 
 		return routes(req, ctx as any)
-	}
+	},
 )
 
 export type Ctx = {
@@ -71,5 +68,5 @@ export type Ctx = {
 export type Handler = (
 	req: Request,
 	ctx: HandlerContext<Ctx>,
-	match: Record<string, string>
+	match: Record<string, string>,
 ) => Response | Promise<Response>

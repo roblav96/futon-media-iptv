@@ -22,7 +22,7 @@ const LOG_SYMBOLS = {
 
 const DEFAULT_INSPECT_OPTIONS = {
 	colors: true,
-	compact: true,
+	compact: false,
 	depth: 4,
 	getters: true,
 	iterableLimit: Number.MAX_SAFE_INTEGER,
@@ -31,6 +31,8 @@ const DEFAULT_INSPECT_OPTIONS = {
 	sorted: true,
 	strAbbreviateSize: Infinity,
 	trailingComma: true,
+	// breakLength: 0,
+	// escapeSequences: false,
 } as Deno.InspectOptions
 
 const ANSI_REGEX = ansi({ onlyFirst: true })

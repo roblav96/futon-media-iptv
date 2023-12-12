@@ -15,9 +15,9 @@ run main:
 	-@deno run --unstable --no-check --allow-all {{main}}
 
 watch main:
-	DENO_ENV="development" \
-		watchexec --clear --restart --shell=bash --watch=src --exts=ts \
-		-- 'echo -e "█ " && just run {{main}}'
+	NODE_ENV="development" \
+		watchexec --quiet --clear --restart --shell=bash --watch=src --exts=ts \
+		-- 'echo -e "█ " && echo && just run {{main}}'
 
 
 
