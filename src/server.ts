@@ -26,6 +26,7 @@ const routes = router<Ctx>(
 			return new Response(error?.message ?? null, {
 				headers: ctx.headers,
 				status: STATUS_CODE.InternalServerError,
+				statusText: STATUS_TEXT[STATUS_CODE.InternalServerError],
 			})
 		},
 		otherHandler: (req, ctx) => {
@@ -33,6 +34,7 @@ const routes = router<Ctx>(
 			return new Response(null, {
 				headers: ctx.headers,
 				status: STATUS_CODE.NotFound,
+				statusText: STATUS_TEXT[STATUS_CODE.NotFound],
 			})
 		},
 	},
@@ -55,6 +57,7 @@ Deno.serve(
 			return new Response(null, {
 				headers: (ctx as any).headers,
 				status: STATUS_CODE.NoContent,
+				statusText: STATUS_TEXT[STATUS_CODE.NoContent],
 			})
 		}
 
