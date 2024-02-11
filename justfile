@@ -7,12 +7,12 @@ set shell := ["bash", "-uc"]
 
 
 install:
-	fd -tf -e ts -E '*.d.ts' -X deno cache --no-check --reload
+	fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check --reload
 
 run main:
-	-@setsid --fork fd -tf -e ts -E '*.d.ts' -X deno cache --no-check --quiet
-	-@setsid --fork deno check --quiet {{main}}
-	-@deno run --no-check --allow-all {{main}}
+	-@setsid --fork fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check --quiet
+	-@setsid --fork deno check --unstable --quiet {{main}}
+	-@deno run --unstable --no-check --allow-all {{main}}
 
 watch main:
 	export NODE_ENV="development" && \
@@ -29,7 +29,7 @@ stop :
 alias restart := start
 start :
 	if [[ -e "{{daemon_path}}.pid" ]]; then just stop; fi
-	daemonize -c "{{justfile_directory()}}" -e "{{daemon_path}}.log" -o "{{daemon_path}}.log" -a -p "{{daemon_path}}.pid" -l "{{daemon_path}}.pid" -- /usr/bin/env deno run --no-check --allow-all src/mod.ts
+	daemonize -c "{{justfile_directory()}}" -e "{{daemon_path}}.log" -o "{{daemon_path}}.log" -a -p "{{daemon_path}}.pid" -l "{{daemon_path}}.pid" -- /usr/bin/env deno run --unstable --no-check --allow-all src/mod.ts
 	just logs 0
 logs lines="100" :
 	tail -f -n {{lines}} "{{daemon_path}}.log"
@@ -40,7 +40,7 @@ logs lines="100" :
 # install :
 # 	rm -r -f node_modules
 # 	mkdir -p node_modules/.cache/deno
-# 	deno types > "$DENO_DIR/lib.deno.d.ts"
-# 	deno types > "$DENO_DIR/lib.deno.unstable.d.ts"
-# 	deno cache --reload src/mod.ts
+# 	deno types --unstable > "$DENO_DIR/lib.deno.d.ts"
+# 	deno types --unstable > "$DENO_DIR/lib.deno.unstable.d.ts"
+# 	deno cache --unstable --reload src/mod.ts
 # # ln -s "$DENO_DIR" node_modules/.cache/deno
