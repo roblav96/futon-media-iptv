@@ -14,26 +14,31 @@ assertExists(EPG_URL, `!Deno.env.get('EPG_URL')`)
 export async function get({ force = false } = {}) {
 	let text = await db.get(import.meta.url)
 	if (!text || force == true) {
-		// text = await (await fetch(EPG_URL)).text()
-		const res = await fetch(EPG_URL)
-		assertExists(res.body, '!res.body')
-		const stream = res.body.pipeThrough(new DecompressionStream('gzip')).getReader()
-		text = new TextDecoder().decode(await readAll(readerFromStreamReader(stream)))
-		// console.log('text ->', text)
+		try {
+			// text = await (await fetch(EPG_URL)).text()
+			const res = await fetch(EPG_URL)
+			assertExists(res.body, '!res.body')
+			const stream = res.body.pipeThrough(new DecompressionStream('gzip')).getReader()
+			text = new TextDecoder().decode(await readAll(readerFromStreamReader(stream)))
+			// console.log('text ->', text)
 
-		const { tvgids } = await m3u.get()
-		const js = xml2js(text, { compact: true }) as any
-		js.tv.channel = js.tv.channel.filter((v: any) => {
-			return tvgids.includes(v._attributes.id)
-		})
-		// console.log('js.tv.channel ->', js.tv.channel)
-		js.tv.programme = js.tv.programme.filter((v: any) => {
-			return tvgids.includes(v._attributes.channel)
-		})
-		// console.log('js.tv.programme ->', js.tv.programme)
-		text = js2xml(js, { compact: true, spaces: 2 })
+			const { tvgids } = await m3u.get()
+			const js = xml2js(text, { compact: true }) as any
+			js.tv.channel = js.tv.channel.filter((v: any) => {
+				return tvgids.includes(v._attributes.id)
+			})
+			// console.log('js.tv.channel ->', js.tv.channel)
+			js.tv.programme = js.tv.programme.filter((v: any) => {
+				return tvgids.includes(v._attributes.channel)
+			})
+			// console.log('js.tv.programme ->', js.tv.programme)
+			text = js2xml(js, { compact: true, spaces: 2 })
 
-		db.set(import.meta.url, text)
+			db.set(import.meta.url, text)
+		} catch (error: any) {
+			console.error('epg.get ->', error)
+			return ''
+		}
 	}
 	return text
 }
