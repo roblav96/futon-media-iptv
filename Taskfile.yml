@@ -12,14 +12,14 @@ tasks:
 
   install:
     desc: Download all Deno dependencies into cache
-    cmd: fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check --reload
+    cmd: fd -tf -e ts -E '*.d.ts' -X deno cache --unstable-cron --no-check --reload
 
   run:
     desc: Run and serve the application
     ignore_error: true
     deps: [cache, check]
     cmds:
-      - deno run --unstable --allow-all --no-check {{.MAIN}}
+      - deno run --unstable-cron --allow-all --no-check {{.MAIN}}
 
   watch:
     desc: Watch for file changes and restart process automatically
@@ -30,8 +30,8 @@ tasks:
   cache:
     internal: true
     ignore_error: true
-    cmd: fd -tf -e ts -E '*.d.ts' -X deno cache --unstable --no-check
+    cmd: fd -tf -e ts -E '*.d.ts' -X deno cache --unstable-cron --no-check
   check:
     internal: true
     ignore_error: true
-    cmd: deno check --unstable --quiet {{.MAIN}} || echo
+    cmd: deno check --unstable-cron --quiet {{.MAIN}} || echo
